@@ -1,13 +1,18 @@
 const express=require('express');
 //const sequelize=require('sequelize');
-
+const path=require('path');
 var bodyparser = require('body-parser');
 var app=express();
 var mysql=require("mysql");
 var cors=require('cors');
+var multer=require('multer');
+
 app.use(cors());
 
-// var flag=false;
+//Set Storage Engine-----------------------------------------------------------
+
+
+
 
 var con=mysql.createConnection({
    host: "localhost",
@@ -39,7 +44,7 @@ app.get('/city',(req,res)=>{
 
 app.get("/display",(req,res)=>{
 
-    var sql="select t1.did,t1.firstname,t1.lastname,t1.email,t2.sname as state,t3.cname as city from tbldata t1,tblstate t2,tblcity t3 where t1.state=t2.sid and t1.state=t3.sid and t1.city=t3.cid and t2.sid=t3.sid and t1.flag='true' order by t1.firstname asc";
+    var sql="select t1.did,t1.firstname,t1.lastname,t1.email,t2.sname as state,t3.cname as city from tbldata t1,tblstate t2,tblcity t3 where t1.state=t2.sid and t1.state=t3.sid and t1.city=t3.cid and t2.sid=t3.sid and t1.flag='true'";
 
     con.query(sql,(err, result) =>{
         if (err) {
@@ -53,7 +58,6 @@ app.get("/display",(req,res)=>{
 app.delete("/delete",(req,res)=>{
 
    var id=req.query.id;
-
    var sql="update tbldata set flag='false' where did='"+ id +"'";
 
    con.query(sql,(err,result)=>{
@@ -107,7 +111,28 @@ app.post("/insert",(req,res)=>{
         var email=req.body.email;
         var state=req.body.state;
         var city=req.body.city;
+        //var myimage=req.body.image;
 
+        //console.log(myimage);
+    // const storage=multer.diskStorage({
+    //     destination: './images',
+    //     filename: function (req,file,cb) {
+    //         cb(null,file.fieldname + '-' + Date.now()+path.extname(file.originalname));
+    //     }
+    // });
+
+//init Upload
+//     const upload=multer({
+//         storage: storage
+//     }).single('myimage');
+//
+//
+//         var imgname;
+//         upload(req,res,(err)=>{
+//             imgname=req.file.filename;
+//         });
+//
+//         console.log(imgname);
         var s = "insert into tbldata(firstname,lastname,email,state,city) values('"+fname+"','"+lname+"','"+email+"','"+state+"','"+city+"')";
         // console.log(s);
         con.query(s, function (err, result) {
@@ -123,6 +148,6 @@ app.post("/insert",(req,res)=>{
 });
 
 app.listen(3001,()=>{
-   console.log("Connect to the server");
+   console.log("Connect to the server 3001");
 });
 
